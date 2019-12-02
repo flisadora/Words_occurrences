@@ -1,0 +1,3 @@
+AED
+
+Compilar programas: cc -Wall -O2 source_files... -o executable_name -lm
