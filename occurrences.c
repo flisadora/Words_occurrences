@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h> 
-#include "manipulate_file.c"
+#include "manipulate_file.h"
 
 // HASH-FUNCTION
 unsigned int hash_function(const char *str, unsigned int s) {
@@ -51,10 +51,11 @@ int main(int argc,char **argv){
     bool flag=false;
     word_stats *ws;
     open_text_file("AED.txt", fd); 
-    while(read_word(fd) == 0) {
+    printf("File opened!");
+    while(read_word(fd) != -1) {
         index = hash_function(fd->word, hash_size);
         printf("%s",fd->word);
-        if(hash_table[index]->key!=NULL) { // Verifica se o indice da Hash-Table é vazio
+        if(hash_table[index]->key[0] != '\0') { // Verifica se o indice da Hash-Table é vazio
             while(hash_table[index]->next!=NULL){
                 if(strcomp(hash_table[index]->key, fd->word)){
                     ws=hash_table[index]->word;
