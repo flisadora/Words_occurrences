@@ -26,8 +26,8 @@ typedef struct word_stats {
 // HASH-TABLE
 typedef struct hash_data {
     struct hash_data *next; 
-    char key[20];
-    struct word_stats *word;
+    char key[64];
+    struct word_stats word;
 } hash_data;
 
 // ALLOCATE NEW HASH-DATA
@@ -44,20 +44,31 @@ hash_data *new_hash_data(void) {
 #define hash_size 20000u
 
 int main(int argc,char **argv){
+    printf("File opened!");
     hash_data *hash_table[hash_size];
-    file_data_t *fd=NULL;
+    file_data_t fd;
+    //fd->fp=NULL;
     int index;
     int i=0;
     bool flag=false;
+
+    for(int k = 0;k < hash_size;k++) hash_table[k] = NULL;
     word_stats *ws;
-    open_text_file("AED.txt", fd); 
     printf("File opened!");
-    while(read_word(fd) != -1) {
-        index = hash_function(fd->word, hash_size);
-        printf("%s",fd->word);
+    open_text_file("AED.txt", &fd); 
+    printf("File opened!");
+    while(read_word(&fd) != -1) {
+        index = hash_function(fd.word, hash_size);
+        hash_data *hd;
+        for(hd = hash_table[index];hd != NULL && strcmp(fd.word,hd->key) != 0;hd = hd->next)
+            ;
+        if(hd == NULL)
+
+
+        printf("%s",fd.word);
         if(hash_table[index]->key[0] != '\0') { // Verifica se o indice da Hash-Table é vazio
             while(hash_table[index]->next!=NULL){
-                if(strcomp(hash_table[index]->key, fd->word)){
+                if(strcmp(hash_table[index]->key, fd->word)==0){
                     ws=hash_table[index]->word;
                     ws->number_occurrences+=1;
                     if(ws->number_occurrences==2){
@@ -83,7 +94,7 @@ int main(int argc,char **argv){
 
                 hash_table[index]->next=hd;
                 hd->next=NULL;
-                srtcpy(hd->key, fd->word);
+                strcpy(hd->key, fd->word);
                 hd->word->number_occurrences=1;
                 hd->word->first_appearence=i;
                 hd->word->last_appearence=i;

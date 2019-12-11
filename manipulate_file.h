@@ -15,7 +15,7 @@ typedef struct file_data {
 
 // OPEN FILE
 int open_text_file(char *file_name,file_data_t *fd) {
-    fd->fp = fopen(file_name,"rb");
+    fd->fp = fopen(file_name,"r");
     if(fd->fp == NULL)
         return -1;
     fd->word_pos = -1;
