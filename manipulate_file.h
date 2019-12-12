@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 // FILE STRUCT
 typedef struct file_data {
@@ -40,7 +41,7 @@ int read_word(file_data_t *fd) {
         if(c == EOF)
             return -1; 
         fd->current_pos++;
-    } while(c <= 32);
+    } while(!((c >= 48 && c<58) || (c>=65 && c<=90) || (c>=97 && c<=122) || (c>=192)));
     // record word
     fd->word_pos = fd->current_pos;
     fd->word_num++;
@@ -50,10 +51,13 @@ int read_word(file_data_t *fd) {
         if(c == EOF)
             break; // end of file 
         fd->current_pos++;
-        if(c <= 32)
+        if(!((c >= 48 && c<58) || (c>=65 && c<=90) || (c>=97 && c<=122) || (c>=192)))
             break; // terminate word 
         fd->word[i] = (char)c;
     }
     fd->word[i] = '\0'; 
+    for(int i = 0; fd->word[i]; i++){
+        fd->word[i] = tolower(fd->word[i]);
+    }
     return 0;
 }

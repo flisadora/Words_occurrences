@@ -44,72 +44,57 @@ hash_data *new_hash_data(void) {
 #define hash_size 20000u
 
 int main(int argc,char **argv){
-    printf("File opened!");
     hash_data *hash_table[hash_size];
     file_data_t fd;
     //fd->fp=NULL;
     int index;
+    int j=0;
     int i=0;
-    bool flag=false;
-
     for(int k = 0;k < hash_size;k++) hash_table[k] = NULL;
-    word_stats *ws;
-    printf("File opened!");
-    open_text_file("AED.txt", &fd); 
-    printf("File opened!");
+    open_text_file("SherlockHolmes.txt", &fd); 
     while(read_word(&fd) != -1) {
         index = hash_function(fd.word, hash_size);
         hash_data *hd;
-        for(hd = hash_table[index];hd != NULL && strcmp(fd.word,hd->key) != 0;hd = hd->next)
-            ;
-        if(hd == NULL)
-
-
-        printf("%s",fd.word);
-        if(hash_table[index]->key[0] != '\0') { // Verifica se o indice da Hash-Table é vazio
-            while(hash_table[index]->next!=NULL){
-                if(strcmp(hash_table[index]->key, fd->word)==0){
-                    ws=hash_table[index]->word;
-                    ws->number_occurrences+=1;
-                    if(ws->number_occurrences==2){
-                        ws->s_distance=i - ws->first_appearence;
-                        ws->l_distance=i - ws->first_appearence;
-                        ws->t_distance+=ws->s_distance;
-                    } else{
-                        if(ws->s_distance > i-ws->last_appearence)
-                            ws->s_distance=i-ws->last_appearence;
-                        if(ws->l_distance < i-ws->last_appearence)
-                            ws->l_distance=i-ws->last_appearence;
-                        ws->t_distance+=i-ws->last_appearence;
-                    }
-                    ws->m_distance=ws->t_distance/ws->number_occurrences;
-                    ws->last_appearence=i;
-                    flag=true;
-                    break;
-                }
-                hash_table[index]=hash_table[index]->next;
+        for(hd = hash_table[index];hd != NULL && strcmp(fd.word,hd->key) != 0;hd = hd->next)i++;
+        if(hd == NULL ){
+            if(j==0){
+                hd=new_hash_data();
+                strcpy(hd->key, fd.word);
+                hd->word.number_occurrences=1;
+                hd->word.first_appearence=i;
+                hd->word.last_appearence=i;
+                hash_table[index]=hd;
+                
             }
-            if(!flag){
+            else{
                 hash_data *hd=new_hash_data();
-
-                hash_table[index]->next=hd;
                 hd->next=NULL;
-                strcpy(hd->key, fd->word);
-                hd->word->number_occurrences=1;
-                hd->word->first_appearence=i;
-                hd->word->last_appearence=i;
-
+                strcpy(hd->key, fd.word);
+                hd->word.number_occurrences=1;
+                hd->word.first_appearence=i;
+                hd->word.last_appearence=i;
             }
-        } else { // Se o index da Hash-Table nao tiver nenhum linked-list
-            strcpy(hash_table[index]->key, fd->word);
-            ws->number_occurrences=1;
-            ws->first_appearence=i;
-            ws->last_appearence=i;
         }
-        flag=false;
-        i+=1;
-        printf("hash: %s", hash_table[index]->key);
+        else {
+            hd->word.number_occurrences+=1;
+            if(hd->word.number_occurrences==2){
+                hd->word.s_distance=i - hd->word.first_appearence;
+                hd->word.l_distance=i - hd->word.first_appearence;
+                hd->word.t_distance+=hd->word.s_distance;
+            } else{
+                if(hd->word.s_distance > i-hd->word.last_appearence)
+                    hd->word.s_distance=i-hd->word.last_appearence;
+                if(hd->word.l_distance < i-hd->word.last_appearence)
+                    hd->word.l_distance=i-hd->word.last_appearence;
+                hd->word.t_distance+=i-hd->word.last_appearence;
+            }
+            hd->word.m_distance=hd->word.t_distance/hd->word.number_occurrences;
+            hd->word.last_appearence=i;
+        }
+        j=0;
+        i++;
+        printf("hash: %s %d \n", hash_table[index]->key,hash_table[index]->word.number_occurrences);
     }
-
+    close_text_file(&fd);
     return 1;
 }
