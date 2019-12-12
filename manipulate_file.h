@@ -50,9 +50,7 @@ hash_data *new_hash_data(void) {
     return hd; 
 }
 
-#define hash_size 20000u
-
-
+unsigned int hash_size= 20000u;
 
 // OPEN FILE
 int open_text_file(char *file_name,file_data_t *fd) {
@@ -102,41 +100,3 @@ int read_word(file_data_t *fd) {
     return 0;
 }
 
-//WORD STATS
-void word_sts(file_data_t *fd, hash_data *hd, hash_data *hi, int i){
-    if(hd == NULL ){
-            if(i==0){
-                hd=new_hash_data();
-                strcpy(hd->key, fd->word);
-                hd->word.number_occurrences=1;
-                hd->word.first_appearence=i;
-                hd->word.last_appearence=i;
-                hi=hd;
-                
-            }
-            else{
-                hash_data *hd=new_hash_data();
-                hd->next=NULL;
-                strcpy(hd->key, fd->word);
-                hd->word.number_occurrences=1;
-                hd->word.first_appearence=i;
-                hd->word.last_appearence=i;
-            }
-        }
-        else {
-            hd->word.number_occurrences+=1;
-            if(hd->word.number_occurrences==2){
-                hd->word.s_distance=i - hd->word.first_appearence;
-                hd->word.l_distance=i - hd->word.first_appearence;
-                hd->word.t_distance+=hd->word.s_distance;
-            } else{
-                if(hd->word.s_distance > i-hd->word.last_appearence)
-                    hd->word.s_distance=i-hd->word.last_appearence;
-                if(hd->word.l_distance < i-hd->word.last_appearence)
-                    hd->word.l_distance=i-hd->word.last_appearence;
-                hd->word.t_distance+=i-hd->word.last_appearence;
-            }
-            hd->word.m_distance=hd->word.t_distance/hd->word.number_occurrences;
-            hd->word.last_appearence=i;
-        }
-}
