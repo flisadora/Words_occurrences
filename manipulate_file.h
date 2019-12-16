@@ -2,9 +2,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <unistd.h>
 
 // FILE STRUCT
-typedef struct file_data {
+typedef struct file_data_t {
     // public data
     long word_pos;  // zero-based 
     long word_num;  // zero-based 
@@ -50,7 +51,7 @@ hash_data *new_hash_data(void) {
     return hd; 
 }
 
-unsigned int hash_size= 20000u;
+unsigned int hash_size= 1000u;
 
 // OPEN FILE
 int open_text_file(char *file_name,file_data_t *fd) {
@@ -62,6 +63,27 @@ int open_text_file(char *file_name,file_data_t *fd) {
     fd->word[0] = '\0';
     fd->current_pos = -1;
     return 0;
+}
+
+//RESIZE
+ struct hash_data ** hash_resize(struct hash_data **hash_table, unsigned int inc){
+    printf("Resizing............................................................................................\n");
+    hash_data *next;
+    struct hash_data **hash_table_new=  malloc((hash_size+inc)*sizeof(struct hash_data));
+    int new_idx;
+    for(int m = 0;m < hash_size+inc;m++) hash_table_new[m] = NULL;
+    for(int l=0;l<hash_size;l++){
+        while(hash_table[l]!=NULL){
+            new_idx= hash_function(hash_table[l]->key, hash_size+inc);
+            next=hash_table[l]->next;
+            hash_table[l]->next=hash_table_new[new_idx];
+            hash_table_new[new_idx]=hash_table[l];
+            hash_table[l]=next;
+        }
+        
+    }
+    free(hash_table);
+    return hash_table_new;
 }
 
 // CLOSE FILE
@@ -99,4 +121,5 @@ int read_word(file_data_t *fd) {
     }
     return 0;
 }
+
 
