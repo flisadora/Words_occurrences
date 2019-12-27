@@ -34,12 +34,20 @@ typedef struct word_stats {
     int t_distance; // total distance
 } word_stats;
 
-// HASH-TABLE
+// HASH-TABLE NODE LINKED LIST
 typedef struct hash_data {
     struct hash_data *next; 
     char key[64];
     struct word_stats word;
 } hash_data;
+
+// HASH-TABLE NODE BINARY TREE
+typedef struct hash_data_bt {
+    struct hash_data_bt *left; 
+    struct hash_data_bt *right;
+    char key[64];
+    struct word_stats word;
+} hash_data_bt;
 
 // ALLOCATE NEW HASH-DATA
 hash_data *new_hash_data(void) {
@@ -50,8 +58,19 @@ hash_data *new_hash_data(void) {
     }
     return hd; 
 }
+// ALLOCATE NEW HASH-DATA
+hash_data_bt *new_hash_data_bt(void) {
+    hash_data_bt *hd = (hash_data_bt *)malloc(sizeof(hash_data_bt)); 
+    if(hd == NULL) {
+        fprintf(stderr,"Out of memory\n");
+        exit(1); 
+    }
+    return hd; 
+}
 
 unsigned int hash_size= 1000u;
+
+
 
 // OPEN FILE
 int open_text_file(char *file_name,file_data_t *fd) {
@@ -64,6 +83,7 @@ int open_text_file(char *file_name,file_data_t *fd) {
     fd->current_pos = -1;
     return 0;
 }
+
 
 //RESIZE
  struct hash_data ** hash_resize(struct hash_data **hash_table, unsigned int inc){
