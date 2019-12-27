@@ -70,7 +70,24 @@ hash_data_bt *new_hash_data_bt(void) {
 
 unsigned int hash_size= 1000u;
 
-
+// INSERT
+void insert_bt(hash_data_bt *root, hash_data_bt *hd ){
+    if(strcmp(hd->key,root->key)<0)
+	{
+		if(root->left!=NULL)
+			insert_bt(root->left,hd);
+		else
+			root->left=hd;
+	}
+	
+	if(strcmp(hd->key,root->key)>0)
+	{
+		if(root->right!=NULL)
+			insert_bt(root->right,hd);
+		else
+			root->right=hd;
+	}
+}
 
 // OPEN FILE
 int open_text_file(char *file_name,file_data_t *fd) {
@@ -85,14 +102,15 @@ int open_text_file(char *file_name,file_data_t *fd) {
 }
 
 
-//RESIZE
+//RESIZE LINKED LIST
  struct hash_data ** hash_resize(struct hash_data **hash_table, unsigned int inc){
     printf("Resizing............................................................................................\n");
     hash_data *next;
+    hash_size+=inc;
     struct hash_data **hash_table_new=  malloc((hash_size+inc)*sizeof(struct hash_data));
     int new_idx;
-    for(int m = 0;m < hash_size+inc;m++) hash_table_new[m] = NULL;
-    for(int l=0;l<hash_size;l++){
+    for(int m = 0;m < hash_size;m++) hash_table_new[m] = NULL;
+    for(int l=0;l<hash_size-inc;l++){
         while(hash_table[l]!=NULL){
             new_idx= hash_function(hash_table[l]->key, hash_size+inc);
             next=hash_table[l]->next;
@@ -105,7 +123,43 @@ int open_text_file(char *file_name,file_data_t *fd) {
     free(hash_table);
     return hash_table_new;
 }
-
+//TRAVERSE_TREE
+void traverse_tree(struct hash_data_bt *hb, struct hash_data_bt **hash_table){
+    if(hb!=NULL){
+        int new_idx= hash_function(hb->key, hash_size);
+        if(hash_table[new_idx]==NULL){
+            hash_table[new_idx]=new_hash_data_bt();
+            strcpy(hash_table[new_idx]->key,hb->key);
+            hash_table[new_idx]->left=NULL;
+            hash_table[new_idx]->right=NULL;
+            hash_table[new_idx]->word=hb->word;
+        }
+        else{
+            hash_data_bt *temp =new_hash_data_bt();
+            temp->left=NULL;
+            temp->right=NULL;
+            temp->word=hb->word;
+            strcpy(temp->key,hb->key);
+            insert_bt(hash_table[new_idx],temp);
+        }
+        traverse_tree(hb->left, hash_table);
+        traverse_tree(hb->right, hash_table);
+    }
+}
+//RESIZE BINARY TREE
+ struct hash_data_bt ** hash_resize_bt(struct hash_data_bt **hash_table, unsigned int inc){
+    printf("Resizing............................................................................................\n");
+    hash_data_bt *next;
+    struct hash_data_bt **hash_table_new=  malloc((hash_size+inc)*sizeof(struct hash_data_bt));
+    int new_idx;
+    hash_size+=inc;
+    for(int m = 0;m < hash_size;m++) hash_table_new[m] = NULL;
+    for(int l=0;l<hash_size-inc;l++){
+        traverse_tree(hash_table[l],hash_table_new);        
+    }
+    free(hash_table);
+    return hash_table_new;
+}
 // CLOSE FILE
 void close_text_file(file_data_t *fd) {
     fclose(fd->fp);
