@@ -18,7 +18,7 @@ static double elapsed_time(void)
 
 
 int main(int argc,char **argv){
-    FILE *out= fopen("outBinaryTree_inc.txt", "w");
+    FILE *out= fopen("outBinaryTree_size.txt", "w");
     for(int x=1;x<argc;x++){
         file_data_t fd;
         int idx;
@@ -27,6 +27,7 @@ int main(int argc,char **argv){
         int count=0;
         int r_count=0;
         (void)elapsed_time();
+        hash_size=(unsigned int)atoi(argv[x]);
         struct hash_data_bt **hash_table=  malloc(hash_size*sizeof(struct hash_data));
         for(int k = 0;k < hash_size;k++) hash_table[k] = NULL;
         open_text_file("SherlockHolmes.txt", &fd); 
@@ -70,7 +71,7 @@ int main(int argc,char **argv){
                 }
                 if (j>hash_size*5){
 
-                    hash_table=hash_resize_bt(hash_table,(unsigned int)atoi(argv[x]));
+                    hash_table=hash_resize_bt(hash_table,1000u);
                     r_count++;
                 }
                 j++;
@@ -80,7 +81,7 @@ int main(int argc,char **argv){
                 if(hd->word.number_occurrences==2){
                     hd->word.s_distance=count - hd->word.first_appearence;
                     hd->word.l_distance=count - hd->word.first_appearence;
-                    hd->word.t_distance+=hd->word.s_distance;
+                    hd->word.t_distance=hd->word.s_distance;
                 } else{
                     if(hd->word.s_distance > count-hd->word.last_appearence)
                         hd->word.s_distance=count-hd->word.last_appearence;
@@ -88,7 +89,7 @@ int main(int argc,char **argv){
                         hd->word.l_distance=count-hd->word.last_appearence;
                     hd->word.t_distance+=count-hd->word.last_appearence;
                 }
-                hd->word.m_distance=hd->word.t_distance/hd->word.number_occurrences;
+                hd->word.m_distance=hd->word.t_distance/(hd->word.number_occurrences -1);
                 hd->word.last_appearence=count;
             }
             i=0;
@@ -104,7 +105,7 @@ int main(int argc,char **argv){
         close_text_file(&fd);
         fprintf(out, "%d %.10f %d\n",(unsigned int)atoi(argv[x]), cpu_time,r_count);
         free(hash_table);
-        hash_size=2000u;
+       
     }
     fclose(out);
     return 1;
