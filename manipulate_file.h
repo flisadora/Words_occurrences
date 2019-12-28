@@ -68,7 +68,7 @@ hash_data_bt *new_hash_data_bt(void) {
     return hd; 
 }
 
-unsigned int hash_size= 1000u;
+unsigned int hash_size= 2000u;
 
 // INSERT
 void insert_bt(hash_data_bt *root, hash_data_bt *hd ){
@@ -104,15 +104,15 @@ int open_text_file(char *file_name,file_data_t *fd) {
 
 //RESIZE LINKED LIST
  struct hash_data ** hash_resize(struct hash_data **hash_table, unsigned int inc){
-    printf("Resizing............................................................................................\n");
+    //printf("Resizing............................................................................................\n");
     hash_data *next;
     hash_size+=inc;
-    struct hash_data **hash_table_new=  malloc((hash_size+inc)*sizeof(struct hash_data));
+    struct hash_data **hash_table_new=  malloc((hash_size)*sizeof(struct hash_data));
     int new_idx;
     for(int m = 0;m < hash_size;m++) hash_table_new[m] = NULL;
     for(int l=0;l<hash_size-inc;l++){
         while(hash_table[l]!=NULL){
-            new_idx= hash_function(hash_table[l]->key, hash_size+inc);
+            new_idx= hash_function(hash_table[l]->key, hash_size);
             next=hash_table[l]->next;
             hash_table[l]->next=hash_table_new[new_idx];
             hash_table_new[new_idx]=hash_table[l];

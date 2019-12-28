@@ -3,6 +3,19 @@
 #include <string.h>
 #include <stdbool.h> 
 #include "manipulate_file.h"
+#include <time.h>
+
+static double elapsed_time(void)
+{
+  static struct timespec last_time,current_time;
+
+  last_time = current_time;
+  if(clock_gettime(CLOCK_PROCESS_CPUTIME_ID,&current_time) != 0)
+    return -1.0; // clock_gettime() failed!!!
+  return            ((double)current_time.tv_sec - (double)last_time.tv_sec)
+         + 1.0e-9 * ((double)current_time.tv_nsec - (double)last_time.tv_nsec);
+}
+
 
 int main(int argc,char **argv){
     file_data_t fd;
