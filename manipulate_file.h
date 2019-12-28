@@ -148,7 +148,7 @@ void traverse_tree(struct hash_data_bt *hb, struct hash_data_bt **hash_table){
 }
 //RESIZE BINARY TREE
  struct hash_data_bt ** hash_resize_bt(struct hash_data_bt **hash_table, unsigned int inc){
-    printf("Resizing............................................................................................\n");
+    //printf("Resizing............................................................................................\n");
     hash_data_bt *next;
     struct hash_data_bt **hash_table_new=  malloc((hash_size+inc)*sizeof(struct hash_data_bt));
     int new_idx;
