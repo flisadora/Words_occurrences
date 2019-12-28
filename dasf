@@ -1,0 +1,41 @@
+ printf("LOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOL\n");
+                int z=0;
+                hash_data *hd_copy;
+                hash_data *hc;
+                hash_data *hash_table_new[hash_size];
+                hash_table_new= (struct hashdata *) malloc((hash_size+1000u)*sizeof(struct hash_data));
+                for(int n=0;n<hash_size;n++){
+                    hash_table_copy[n]=hash_table[n];
+                }
+                int new_idx;
+                hash_data *hash_table[hash_size+1000u];
+                for(int m = 0;m < hash_size+1000u;m++) hash_table[m] = NULL;
+                for(int l=0;l<hash_size;l++){
+                    hd_copy=hash_table_copy[l];
+                    while(hd_copy!=NULL){
+                        new_idx= hash_function(hd_copy->key, hash_size+1000u);
+                        for(hc=hash_table[new_idx];hc != NULL ;hc = hc->next)
+                            z++;
+                        if(z==0){
+                            hc=new_hash_data();
+                            hc->next=NULL;
+                        }
+                        else{
+                            hc=new_hash_data();
+                            hc->next=hash_table[new_idx];
+                        }
+                        strcpy(hc->key,hd->key);
+                        hc->word.first_appearence=hd_copy->word.first_appearence;
+                        hc->word.l_distance=hd_copy->word.l_distance;
+                        hc->word.last_appearence=hd_copy->word.last_appearence;
+                        hc->word.m_distance=hd_copy->word.m_distance;
+                        hc->word.number_occurrences=hd_copy->word.number_occurrences;
+                        hc->word.s_distance=hd_copy->word.s_distance;
+                        hc->word.t_distance=hd_copy->word.t_distance;
+                        hash_table[new_idx]=hc;
+                        hd_copy=hd_copy->next;
+                        z=0;
+                    }
+                    free(hash_table_copy[l]);
+                }
+                hash_size+=1000u;
